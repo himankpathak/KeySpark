@@ -9,6 +9,15 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import static android.view.KeyEvent.KEYCODE_SPACE;
+
 public class KeyboardSpark extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
 
     private KeyboardView keyboardView;
@@ -27,10 +36,37 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
 
     @Override
     public void onPress(int i) {
-        Log.e("","hello");
-        if(i==62){
-            Log.e("","hello");
+
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="https://translation.googleapis.com/language/translate/v2/detect";
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.e("hello","Response is: "+ response.substring(0,500));
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("hello","That didn't work!");
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+
+        switch(i) {
+            case 32:
+                Log.e("bhanu2","yolo");
         }
+
+
     }
 
     @Override
@@ -39,12 +75,12 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
     }
 
 
-
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
         InputConnection inputConnection = getCurrentInputConnection();
         if (inputConnection != null) {
             switch(primaryCode) {
+
                 case Keyboard.KEYCODE_DELETE :
                     CharSequence selectedText = inputConnection.getSelectedText(0);
 
