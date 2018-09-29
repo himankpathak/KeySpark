@@ -9,21 +9,41 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import static android.view.KeyEvent.KEYCODE_SPACE;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+
+import static java.net.Proxy.Type.HTTP;
+
 
 public class KeyboardSpark extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
 
     private KeyboardView keyboardView;
     private Keyboard keyboard;
-
     private boolean caps = false;
+
+    RequestQueue queue;
+    String url ="http://10.0.2.2:5000/";
+    int count=0;
+    String charcount="";
+    String resultstring;
+    String globalglobal="";
 
     @Override
     public View onCreateInputView() {
@@ -31,41 +51,85 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
         keyboard = new Keyboard(this, R.xml.keys_layout);
         keyboardView.setKeyboard(keyboard);
         keyboardView.setOnKeyboardActionListener(this);
+
+        if(queue == null)
+            queue = Volley.newRequestQueue(this);
         return keyboardView;
+
     }
 
-    @Override
-    public void onPress(int i) {
 
+    public void detectAP(final String word){
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://translation.googleapis.com/language/translate/v2/detect";
+        Log.e("enter",word);
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url+"detect/"+word,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Log.e("hello","Response is: "+ response.substring(0,500));
+                        Log.e("kya",response);
+                        translateAP(response, word);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("hello","That didn't work!");
+                Log.e("That didn't work!","hell");
             }
         });
+            if(queue == null)
+                Log.e("error","hai");
+            queue.add(stringRequest);
+    }
+    public void translateAP(String n,String word){
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        Log.e("enter",n);
+
+        if (n.contains("en")){
+            Log.e("kya","angrezi hai");
+            globalglobal=word;
+
+        } else{
+            Log.e("kya","hindi hai");
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url+"translate/"+word+"/en/hi",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+//                            inputConnection.commitText(resultstring, 1);
+                            Log.e("kya",response);
+                            globalglobal=response;
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("That didn't work!","hell");
+                }
+            });
+            queue.add(stringRequest);
+        }
+    }
 
 
+    @Override
+    public void onPress(int i) {
+
+        count++;
+        charcount+=String.valueOf((char)i);
+        InputConnection inputConnection = getCurrentInputConnection();
+        String popul= String.valueOf((char)i);
+        Log.e(Integer.toString(i),popul);
         switch(i) {
             case 32:
-                Log.e("bhanu2","yolo");
-        }
 
+                detectAP(charcount);
+                charcount="";
+
+        }
+        if(globalglobal!="") {
+            inputConnection.deleteSurroundingText(count, 0);
+            count=0;
+            inputConnection.commitText(" "+globalglobal+" ", 1);
+            globalglobal="";
+        }
 
     }
 
@@ -113,6 +177,7 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
 
     @Override
     public void onText(CharSequence charSequence) {
+        Log.e("himank",charSequence.toString());
 
     }
 
