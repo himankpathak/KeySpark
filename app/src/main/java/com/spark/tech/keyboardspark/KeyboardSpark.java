@@ -149,7 +149,9 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
                     CharSequence selectedText = inputConnection.getSelectedText(0);
 
                     if (TextUtils.isEmpty(selectedText)) {
-                        charcount=charcount.substring(0,charcount.length()-2);
+                        try {
+                            charcount = charcount.substring(0, charcount.length() - 2);
+                        }catch (IndexOutOfBoundsException e){}
                         inputConnection.deleteSurroundingText(1, 0);
                         Log.e("new","first");
 
