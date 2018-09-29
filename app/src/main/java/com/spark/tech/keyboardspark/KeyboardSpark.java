@@ -39,7 +39,7 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
     private boolean caps = false;
 
     RequestQueue queue;
-    String url ="http://10.0.2.2:5000/";
+    String url ="http://bhanudutta.pythonanywhere.com/";
     int count=0;
     String charcount="";
     String resultstring;
@@ -125,7 +125,7 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
 
         }
         if(globalglobal!="") {
-            inputConnection.deleteSurroundingText(count, 0);
+            inputConnection.deleteSurroundingText(count, 1);
             count=0;
             inputConnection.commitText(" "+globalglobal+" ", 1);
             globalglobal="";
@@ -149,10 +149,14 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
                     CharSequence selectedText = inputConnection.getSelectedText(0);
 
                     if (TextUtils.isEmpty(selectedText)) {
+                        charcount=charcount.substring(0,charcount.length()-2);
                         inputConnection.deleteSurroundingText(1, 0);
+                        Log.e("new","first");
+
                     } else {
                         inputConnection.commitText("", 1);
                     }
+                    break;
                 case Keyboard.KEYCODE_SHIFT:
                     caps = !caps;
                     keyboard.setShifted(caps);
