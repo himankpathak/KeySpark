@@ -39,7 +39,7 @@ public class KeyboardSpark extends InputMethodService implements KeyboardView.On
     private boolean caps = false;
 
     RequestQueue queue;
-    String url ="http://bhanudutta.pythonanywhere.com/";
+    String url ="http://10.0.2.2:5000/"; //10.0.2.2:5000 - android localhost
     int count=0;
     String charcount="";
     String resultstring;

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/KeyboardSpark.iml" filepath="$PROJECT_DIR$/KeyboardSpark.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keyboardSpark.iml" filepath="$PROJECT_DIR$/keyboardSpark.iml" />
     </modules>
   </component>
 </project>
